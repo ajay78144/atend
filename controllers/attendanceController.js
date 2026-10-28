@@ -19,13 +19,13 @@ const getTodayDate = () => {
 // Route: POST /api/attendance
 exports.markAttendance = async (req, res) => {
     try {
-        let { employeeId, name, date, status, isAvailable, remarks } = req.body;
+        let { employeeId, name, manager, date, status, isAvailable, remarks } = req.body;
 
         // Validation
         if (!employeeId) {
             return res.status(400).json({
                 success: false,
-                message: 'Employee ID dena zaroori hai!'
+                message: 'employeeId dena zaroori hai!'
             });
         }
 
@@ -37,10 +37,16 @@ exports.markAttendance = async (req, res) => {
         // Default status Present rakhein
         const attendanceStatus = status || 'Present';
 
-        // Agar name nahi bheja, to Employee model se dhoondhein
-        if (!name) {
+        // Agar name ya manager nahi bheja, to Employee model se dhoondhein
+        if (!name || !manager) {
             const emp = await Employee.findOne({ employeeId });
-            name = emp ? emp.name : 'Unknown';
+            if (emp) {
+                if (!name) name = emp.name;
+                if (!manager) manager = emp.manager;
+            } else {
+                if (!name) name = 'Unknown';
+                if (!manager) manager = 'General Manager';
+            }
         }
 
         // Check karein kya iss date par iss employee ki attendance pehle se lagi hai
@@ -57,6 +63,7 @@ exports.markAttendance = async (req, res) => {
         const newAttendance = new Attendance({
             employeeId,
             name,
+            manager,
             date,
             status: attendanceStatus,
             isAvailable: isAvailable !== undefined ? isAvailable : (attendanceStatus === 'Present'),

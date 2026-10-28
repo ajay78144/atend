@@ -285,8 +285,8 @@
                     <input type="text" id="empName" value="Rahul Sharma" placeholder="e.g. Rahul Sharma">
                 </div>
                 <div class="form-group">
-                    <label>Department / Role</label>
-                    <input type="text" id="empDept" value="Development" placeholder="e.g. Development">
+                    <label>Manager Name</label>
+                    <input type="text" id="empManager" value="Rajesh Sharma" placeholder="e.g. Rajesh Sharma">
                 </div>
 
                 <div class="btn-row">
@@ -423,7 +423,7 @@
             const body = {
                 employeeId: document.getElementById('empId').value.trim(),
                 name: document.getElementById('empName').value.trim(),
-                department: document.getElementById('empDept').value.trim(),
+                manager: document.getElementById('empManager').value.trim(),
                 isAvailable: true
             };
             try {
@@ -467,7 +467,7 @@
             const id = document.getElementById('empId').value.trim();
             const body = {
                 name: document.getElementById('empName').value.trim(),
-                department: document.getElementById('empDept').value.trim(),
+                manager: document.getElementById('empManager').value.trim(),
                 isAvailable: true
             };
             try {
@@ -502,10 +502,12 @@
             const date = document.getElementById('attDate').value;
             const status = document.getElementById('attStatus').value;
             const empName = document.getElementById('empName').value.trim();
+            const manager = document.getElementById('empManager').value.trim();
 
             const body = {
                 employeeId: empId,
                 name: empName,
+                manager: manager,
                 date: date,
                 status: status,
                 isAvailable: status === 'Present',

@@ -63,7 +63,7 @@ async function runTests() {
         const addEmpRes = await makeRequest('/api/employees', 'POST', {
             employeeId: testEmpId,
             name: 'Vikram Singh',
-            department: 'Testing Dept',
+            manager: 'Suresh Kumar',
             isAvailable: true
         });
         console.log(`   👉 Status: ${addEmpRes.statusCode} | Message: ${addEmpRes.data.message}`);
@@ -82,7 +82,7 @@ async function runTests() {
         console.log(`\n5️⃣ Testing Update Employee: PUT /api/employees/${testEmpId}`);
         const updateEmpRes = await makeRequest(`/api/employees/${testEmpId}`, 'PUT', {
             name: 'Vikram Singh (Senior QA)',
-            department: 'Quality Assurance',
+            manager: 'Rajesh Verma',
             isAvailable: true
         });
         console.log(`   👉 Status: ${updateEmpRes.statusCode} | Updated Name: ${updateEmpRes.data.data.name}`);
@@ -92,6 +92,7 @@ async function runTests() {
         const markAttRes = await makeRequest('/api/attendance', 'POST', {
             employeeId: testEmpId,
             name: 'Vikram Singh (Senior QA)',
+            manager: 'Rajesh Verma',
             date: testDate,
             status: 'Present',
             isAvailable: true,

@@ -21,7 +21,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"employeeId\": \"EMP101\",\n  \"name\": \"Rahul Sharma\",\n  \"department\": \"Development\",\n  \"isAvailable\": true\n}"
+							"raw": "{\n  \"employeeId\": \"EMP101\",\n  \"name\": \"Rahul Sharma\",\n  \"manager\": \"Rajesh Verma\",\n  \"isAvailable\": true\n}"
 						},
 						"url": {
 							"raw": "http://localhost:5000/api/employees",
@@ -72,7 +72,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Rahul Kumar Sharma\",\n  \"department\": \"Senior Developer\",\n  \"isAvailable\": true\n}"
+							"raw": "{\n  \"name\": \"Rahul Kumar Sharma\",\n  \"manager\": \"Suresh Kumar\",\n  \"isAvailable\": true\n}"
 						},
 						"url": {
 							"raw": "http://localhost:5000/api/employees/EMP101",

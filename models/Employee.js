@@ -1,6 +1,6 @@
 // ==========================================
 // 📁 models/Employee.js
-// 🎯 Kaam: Employee ka Schema (Data Structure) define karna
+// 🎯 Kaam: Employee ka Schema (employeeId, name, manager, isAvailable)
 // ==========================================
 
 const mongoose = require('mongoose');
@@ -8,18 +8,18 @@ const mongoose = require('mongoose');
 const employeeSchema = new mongoose.Schema({
     employeeId: {
         type: String,
-        required: [true, 'Employee ID zaroori hai'],
+        required: [true, 'employeeId dena zaroori hai'],
         unique: true,
         trim: true
     },
     name: {
         type: String,
-        required: [true, 'Employee ka naam zaroori hai'],
+        required: [true, 'name dena zaroori hai'],
         trim: true
     },
-    department: {
+    manager: {
         type: String,
-        default: 'General',
+        default: 'General Manager',
         trim: true
     },
     isAvailable: {
@@ -27,7 +27,7 @@ const employeeSchema = new mongoose.Schema({
         default: true
     }
 }, {
-    timestamps: true // createdAt aur updatedAt automatically add karega
+    timestamps: true
 });
 
 module.exports = mongoose.model('Employee', employeeSchema);

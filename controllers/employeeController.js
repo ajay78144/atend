@@ -1,6 +1,6 @@
 // ==========================================
 // 📁 controllers/employeeController.js
-// 🎯 Kaam: Employee se jude sabhi functions (Add, Get, Update, Delete)
+// 🎯 Kaam: Employee ke CRUD operations (employeeId, name, manager, isAvailable)
 // ==========================================
 
 const Employee = require('../models/Employee');
@@ -9,17 +9,17 @@ const Employee = require('../models/Employee');
 // Route: POST /api/employees
 exports.addEmployee = async (req, res) => {
     try {
-        const { employeeId, name, department, isAvailable } = req.body;
+        const { employeeId, name, manager, isAvailable } = req.body;
 
-        // Validation: Required fields check karein
+        // Validation
         if (!employeeId || !name) {
             return res.status(400).json({
                 success: false,
-                message: 'Kripya employeeId aur name dono provide karein'
+                message: 'Kripya employeeId aur name provide karein!'
             });
         }
 
-        // Check karein kya yeh employeeId pehle se exist karti hai
+        // Check duplicate
         const existingEmployee = await Employee.findOne({ employeeId });
         if (existingEmployee) {
             return res.status(400).json({
@@ -32,7 +32,7 @@ exports.addEmployee = async (req, res) => {
         const newEmployee = new Employee({
             employeeId,
             name,
-            department: department || 'General',
+            manager: manager || 'General Manager',
             isAvailable: isAvailable !== undefined ? isAvailable : true
         });
 
@@ -40,7 +40,6 @@ exports.addEmployee = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            
             message: 'Employee successfully add ho gaya!',
             data: savedEmployee
         });
@@ -101,17 +100,22 @@ exports.getEmployeeById = async (req, res) => {
     }
 };
 
-// 4️⃣ PUT: Employee ki detail update karein
+// 4️⃣ PUT: Employee detail update karein
 // Route: PUT /api/employees/:employeeId
 exports.updateEmployee = async (req, res) => {
     try {
         const { employeeId } = req.params;
-        const { name, department, isAvailable } = req.body;
+        const { name, manager, isAvailable } = req.body;
+
+        const updateData = {};
+        if (name !== undefined) updateData.name = name;
+        if (manager !== undefined) updateData.manager = manager;
+        if (isAvailable !== undefined) updateData.isAvailable = isAvailable;
 
         const updatedEmployee = await Employee.findOneAndUpdate(
             { employeeId },
-            { name, department, isAvailable },
-            { new: true, runValidators: true } // new: true se updated data return hoga
+            updateData,
+            { new: true, runValidators: true }
         );
 
         if (!updatedEmployee) {
