@@ -29,22 +29,12 @@ app.get('/api', (req, res) => {
         message: '🚀 Attendance Management System Backend is Running smoothly!',
         database: 'Connected to MongoDB Atlas',
         availableRoutes: {
-            employees: {
-                addEmployee: 'POST   /api/employees',
-                getAllEmployees: 'GET    /api/employees',
-                getEmployeeById: 'GET    /api/employees/:employeeId',
-                updateEmployee: 'PUT    /api/employees/:employeeId',
-                deleteEmployee: 'DELETE /api/employees/:employeeId'
-            },
             attendance: {
-                markAttendance: 'POST   /api/attendance',
+                postAttendance: 'POST   /api/attendance',
                 getAllAttendance: 'GET    /api/attendance',
-                getByDate: 'GET    /api/attendance/date/:date',
-                getByEmployee: 'GET    /api/attendance/employee/:employeeId',
-                updateByEmployeeDate: 'PUT    /api/attendance/update/:employeeId/:date',
-                deleteByEmployeeDate: 'DELETE /api/attendance/delete/:employeeId/:date',
-                updateById: 'PUT    /api/attendance/:id',
-                deleteById: 'DELETE /api/attendance/:id'
+                getAttendanceById: 'GET    /api/attendance/:id',
+                updateAttendance: 'PUT    /api/attendance/:id',
+                deleteAttendance: 'DELETE /api/attendance/:id'
             }
         }
     });

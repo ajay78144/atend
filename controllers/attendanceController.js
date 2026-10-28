@@ -1,213 +1,137 @@
 // ==========================================
 // 📁 controllers/attendanceController.js
-// 🎯 Kaam: Attendance se jude sabhi operations (Mark, View, Update, Delete)
+// 🎯 Operations: POST, GET, PUT (Update), DELETE
+// Fields: employeeId, name, manager, isAvailable, attendanceDate
 // ==========================================
 
 const Attendance = require('../models/Attendance');
-const Employee = require('../models/Employee');
 
-// Helper function: Aaj ki date ko "YYYY-MM-DD" format me lana
-const getTodayDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
-
-// 1️⃣ POST: Attendance mark karna (Present / Absent / Leave lagana)
+// 1️⃣ POST: Nayi Attendance add/mark karna
 // Route: POST /api/attendance
-exports.markAttendance = async (req, res) => {
+exports.postAttendance = async (req, res) => {
     try {
-        let { employeeId, name, manager, date, status, isAvailable, remarks } = req.body;
+        const { employeeId, name, manager, isAvailable, attendanceDate } = req.body;
 
-        // Validation
-        if (!employeeId) {
+        // Validation: Required fields check karein
+        if (!employeeId || !name || !manager || !attendanceDate) {
             return res.status(400).json({
                 success: false,
-                message: 'employeeId dena zaroori hai!'
+                message: 'Kripya employeeId, name, manager aur attendanceDate sabhi provide karein!'
             });
         }
 
-        // Agar date request me nahi di to aaj ki date le lo
-        if (!date) {
-            date = getTodayDate();
-        }
-
-        // Default status Present rakhein
-        const attendanceStatus = status || 'Present';
-
-        // Agar name ya manager nahi bheja, to Employee model se dhoondhein
-        if (!name || !manager) {
-            const emp = await Employee.findOne({ employeeId });
-            if (emp) {
-                if (!name) name = emp.name;
-                if (!manager) manager = emp.manager;
-            } else {
-                if (!name) name = 'Unknown';
-                if (!manager) manager = 'General Manager';
-            }
-        }
-
-        // Check karein kya iss date par iss employee ki attendance pehle se lagi hai
-        const existingAttendance = await Attendance.findOne({ employeeId, date });
-        if (existingAttendance) {
-            return res.status(400).json({
-                success: false,
-                message: `Employee "${name}" (${employeeId}) ki attendance date "${date}" par pehle se lagi hui hai! Agar change karni hai to PUT request use karein.`,
-                existingData: existingAttendance
-            });
-        }
-
-        // Nayi attendance record banayein
+        // Attendance save karein
         const newAttendance = new Attendance({
             employeeId,
             name,
             manager,
-            date,
-            status: attendanceStatus,
-            isAvailable: isAvailable !== undefined ? isAvailable : (attendanceStatus === 'Present'),
-            remarks: remarks || ''
+            isAvailable: isAvailable !== undefined ? isAvailable : true,
+            attendanceDate
         });
 
-        const savedAttendance = await newAttendance.save();
+        const savedData = await newAttendance.save();
 
         res.status(201).json({
             success: true,
-            message: `Attendance marked successfully: ${attendanceStatus}!`,
-            data: savedAttendance
+            message: 'Attendance successfully add ho gayi!',
+            data: savedData
         });
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Attendance mark karne me error aaya',
+            message: 'Attendance add karne me error aaya',
             error: error.message
         });
     }
 };
 
-// 2️⃣ GET: Sabhi Attendance records dekhna (Filter by Date / EmployeeId / Status support)
+// 2️⃣ GET: Sabhi Attendance records nikalna
 // Route: GET /api/attendance
-// Example Query: /api/attendance?date=2026-10-27 ya /api/attendance?employeeId=EMP001
-exports.getAllAttendance = async (req, res) => {
+// Optional filter by attendanceDate: GET /api/attendance?attendanceDate=2026-10-28
+exports.getAttendance = async (req, res) => {
     try {
-        const { date, employeeId, status } = req.query;
+        const { attendanceDate, employeeId } = req.query;
         let filter = {};
 
-        if (date) filter.date = date;
+        if (attendanceDate) filter.attendanceDate = attendanceDate;
         if (employeeId) filter.employeeId = employeeId;
-        if (status) filter.status = status;
 
-        const records = await Attendance.find(filter).sort({ date: -1, createdAt: -1 });
+        const records = await Attendance.find(filter).sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,
             total: records.length,
-            filtersApplied: filter,
             data: records
         });
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Attendance records fetch karne me error aaya',
+            message: 'Attendance fetch karne me error aaya',
             error: error.message
         });
     }
 };
 
-// 3️⃣ GET: Kisi specific Date ki attendance nikalna (e.g. 2026-10-27)
-// Route: GET /api/attendance/date/:date
-exports.getAttendanceByDate = async (req, res) => {
+// 3️⃣ GET (FIND): Single Attendance record dhoondhna (ID ya EmployeeId se)
+// Route: GET /api/attendance/:id
+exports.getAttendanceById = async (req, res) => {
     try {
-        const { date } = req.params;
+        const { id } = req.params;
 
-        const records = await Attendance.find({ date });
+        // Pehle MongoDB ID se dhoondein, agar na mile to employeeId se
+        let record = null;
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            record = await Attendance.findById(id);
+        }
+        if (!record) {
+            record = await Attendance.findOne({ employeeId: id });
+        }
 
-        // Stats nikaalna: Present kitne hain, Absent kitne hain
-        const presentCount = records.filter(r => r.status === 'Present').length;
-        const absentCount = records.filter(r => r.status === 'Absent').length;
-        const leaveCount = records.filter(r => r.status === 'Leave' || r.status === 'Half-day').length;
-
-        res.status(200).json({
-            success: true,
-            date,
-            summary: {
-                totalMarked: records.length,
-                present: presentCount,
-                absent: absentCount,
-                leave: leaveCount
-            },
-            data: records
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Date ke mutabiq attendance nikalne me error aaya',
-            error: error.message
-        });
-    }
-};
-
-// 4️⃣ GET: Kisi specific Employee ki poori attendance history dekhna
-// Route: GET /api/attendance/employee/:employeeId
-exports.getAttendanceByEmployee = async (req, res) => {
-    try {
-        const { employeeId } = req.params;
-
-        const records = await Attendance.find({ employeeId }).sort({ date: -1 });
-
-        if (records.length === 0) {
+        if (!record) {
             return res.status(404).json({
                 success: false,
-                message: `Employee ID "${employeeId}" ki koi attendance record nahi mili!`
+                message: `Attendance record "${id}" nahi mila!`
             });
         }
 
-        const totalDays = records.length;
-        const presentDays = records.filter(r => r.status === 'Present').length;
-        const percentage = ((presentDays / totalDays) * 100).toFixed(2);
-
         res.status(200).json({
             success: true,
-            employeeId,
-            employeeName: records[0].name,
-            totalDays,
-            presentDays,
-            attendancePercentage: `${percentage}%`,
-            history: records
+            data: record
         });
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Employee attendance history nikalne me error aaya',
+            message: 'Attendance dhoondhne me error aaya',
             error: error.message
         });
     }
 };
 
-// 5️⃣ PUT: Agar galti se attendance galat lag gayi to UPDATE karna
+// 4️⃣ PUT: Attendance record update karna (Agar galat lag gayi ho)
 // Route: PUT /api/attendance/:id
 exports.updateAttendance = async (req, res) => {
     try {
         const { id } = req.params;
-        const { status, isAvailable, remarks, date } = req.body;
+        const { name, manager, isAvailable, attendanceDate } = req.body;
 
-        const updateFields = {};
-        if (status !== undefined) updateFields.status = status;
-        if (isAvailable !== undefined) updateFields.isAvailable = isAvailable;
-        if (remarks !== undefined) updateFields.remarks = remarks;
-        if (date !== undefined) updateFields.date = date;
+        const updateData = {};
+        if (name !== undefined) updateData.name = name;
+        if (manager !== undefined) updateData.manager = manager;
+        if (isAvailable !== undefined) updateData.isAvailable = isAvailable;
+        if (attendanceDate !== undefined) updateData.attendanceDate = attendanceDate;
 
-        const updated = await Attendance.findByIdAndUpdate(
-            id,
-            updateFields,
-            { new: true, runValidators: true }
-        );
+        let updated = null;
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            updated = await Attendance.findByIdAndUpdate(id, updateData, { new: true });
+        }
+        if (!updated) {
+            updated = await Attendance.findOneAndUpdate({ employeeId: id }, updateData, { new: true });
+        }
 
         if (!updated) {
             return res.status(404).json({
                 success: false,
-                message: 'Attendance record nahi mila update karne ke liye!'
+                message: `Update karne ke liye record "${id}" nahi mila!`
             });
         }
 
@@ -225,24 +149,30 @@ exports.updateAttendance = async (req, res) => {
     }
 };
 
-// 6️⃣ DELETE: Attendance record delete karna
+// 5️⃣ DELETE: Attendance record delete karna
 // Route: DELETE /api/attendance/:id
 exports.deleteAttendance = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const deleted = await Attendance.findByIdAndDelete(id);
+        let deleted = null;
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            deleted = await Attendance.findByIdAndDelete(id);
+        }
+        if (!deleted) {
+            deleted = await Attendance.findOneAndDelete({ employeeId: id });
+        }
 
         if (!deleted) {
             return res.status(404).json({
                 success: false,
-                message: 'Delete karne ke liye attendance record nahi mila!'
+                message: `Delete karne ke liye record "${id}" nahi mila!`
             });
         }
 
         res.status(200).json({
             success: true,
-            message: `Employee "${deleted.name}" ki "${deleted.date}" ki attendance successfully delete kar di gayi!`,
+            message: `Employee "${deleted.name}" ki attendance record successfully delete ho gayi!`,
             data: deleted
         });
     } catch (error) {
@@ -253,72 +183,3 @@ exports.deleteAttendance = async (req, res) => {
         });
     }
 };
-
-// 7️⃣ PUT: Agar employeeId aur date pata ho to directly update karna (Bina Mongo _id ke)
-// Route: PUT /api/attendance/update/:employeeId/:date
-exports.updateAttendanceByEmployeeAndDate = async (req, res) => {
-    try {
-        const { employeeId, date } = req.params;
-        const { status, isAvailable, remarks } = req.body;
-
-        const updateFields = {};
-        if (status !== undefined) updateFields.status = status;
-        if (isAvailable !== undefined) updateFields.isAvailable = isAvailable;
-        if (remarks !== undefined) updateFields.remarks = remarks;
-
-        const updated = await Attendance.findOneAndUpdate(
-            { employeeId, date },
-            updateFields,
-            { new: true, runValidators: true }
-        );
-
-        if (!updated) {
-            return res.status(404).json({
-                success: false,
-                message: `Employee "${employeeId}" ki "${date}" par koi attendance nahi mili!`
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: `Employee "${updated.name}" ki "${date}" ki attendance successfully update ho gayi!`,
-            data: updated
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Attendance update karne me error aaya',
-            error: error.message
-        });
-    }
-};
-
-// 8️⃣ DELETE: employeeId aur date se attendance delete karna
-// Route: DELETE /api/attendance/delete/:employeeId/:date
-exports.deleteAttendanceByEmployeeAndDate = async (req, res) => {
-    try {
-        const { employeeId, date } = req.params;
-
-        const deleted = await Attendance.findOneAndDelete({ employeeId, date });
-
-        if (!deleted) {
-            return res.status(404).json({
-                success: false,
-                message: `Employee "${employeeId}" ki "${date}" par koi attendance nahi mili delete karne ke liye!`
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: `Employee "${deleted.name}" ki "${date}" ki attendance successfully delete kar di gayi!`,
-            data: deleted
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Attendance delete karne me error aaya',
-            error: error.message
-        });
-    }
-};
-

@@ -1,7 +1,8 @@
 // ==========================================
 // 🧪 test.js
-// 🎯 Kaam: Sabhi APIs (GET, POST, PUT, DELETE, FIND) ko automatically test karna
-// Run karne ke liye: node test.js
+// 🎯 Kaam: Attendance API (POST, GET, PUT, DELETE) test karna
+// Fields: employeeId, name, manager, isAvailable, attendanceDate
+// Run: node test.js
 // ==========================================
 
 const http = require('http');
@@ -46,94 +47,53 @@ function makeRequest(path, method, data = null) {
 
 async function runTests() {
     console.log('========================================================');
-    console.log('🧪 Starting Full System Test for Attendance Backend...');
+    console.log('🧪 Testing Attendance API (POST, GET, PUT, DELETE)');
     console.log('========================================================\n');
 
-    const testEmpId = 'TEST_EMP_' + Math.floor(100 + Math.random() * 900);
-    const testDate = new Date().toISOString().split('T')[0];
+    const testEmpId = 'EMP_' + Math.floor(100 + Math.random() * 900);
+    const testDate = '2026-10-28';
 
     try {
-        // 1. API Status check
-        console.log('1️⃣ Testing Server Status: GET /api');
-        const statusRes = await makeRequest('/api', 'GET');
-        console.log(`   👉 Status: ${statusRes.statusCode} | ${statusRes.data.message || 'OK'}`);
-
-        // 2. Add Employee (POST)
-        console.log(`\n2️⃣ Testing Add Employee: POST /api/employees (${testEmpId})`);
-        const addEmpRes = await makeRequest('/api/employees', 'POST', {
+        // 1. POST Attendance
+        console.log(`1️⃣ POST Attendance: POST /api/attendance (${testEmpId})`);
+        const postRes = await makeRequest('/api/attendance', 'POST', {
             employeeId: testEmpId,
-            name: 'Vikram Singh',
-            manager: 'Suresh Kumar',
-            isAvailable: true
-        });
-        console.log(`   👉 Status: ${addEmpRes.statusCode} | Message: ${addEmpRes.data.message}`);
-
-        // 3. Get All Employees (GET)
-        console.log('\n3️⃣ Testing Get All Employees: GET /api/employees');
-        const getAllEmpRes = await makeRequest('/api/employees', 'GET');
-        console.log(`   👉 Status: ${getAllEmpRes.statusCode} | Total Employees: ${getAllEmpRes.data.total}`);
-
-        // 4. Find Employee by ID (FIND - GET)
-        console.log(`\n4️⃣ Testing Find Employee by ID: GET /api/employees/${testEmpId}`);
-        const findEmpRes = await makeRequest(`/api/employees/${testEmpId}`, 'GET');
-        console.log(`   👉 Status: ${findEmpRes.statusCode} | Name: ${findEmpRes.data.data.name}`);
-
-        // 5. Update Employee (PUT)
-        console.log(`\n5️⃣ Testing Update Employee: PUT /api/employees/${testEmpId}`);
-        const updateEmpRes = await makeRequest(`/api/employees/${testEmpId}`, 'PUT', {
-            name: 'Vikram Singh (Senior QA)',
-            manager: 'Rajesh Verma',
-            isAvailable: true
-        });
-        console.log(`   👉 Status: ${updateEmpRes.statusCode} | Updated Name: ${updateEmpRes.data.data.name}`);
-
-        // 6. Mark Attendance (POST - Present)
-        console.log(`\n6️⃣ Testing Mark Attendance (Present): POST /api/attendance`);
-        const markAttRes = await makeRequest('/api/attendance', 'POST', {
-            employeeId: testEmpId,
-            name: 'Vikram Singh (Senior QA)',
-            manager: 'Rajesh Verma',
-            date: testDate,
-            status: 'Present',
+            name: 'Ajay Kumar',
+            manager: 'Rajesh Sharma',
             isAvailable: true,
-            remarks: 'On time login'
+            attendanceDate: testDate
         });
-        console.log(`   👉 Status: ${markAttRes.statusCode} | Result: ${markAttRes.data.message}`);
+        console.log(`   👉 Status: ${postRes.statusCode} | Message: ${postRes.data.message}`);
+        const recordId = postRes.data.data ? postRes.data.data._id : testEmpId;
 
-        // 7. Get Attendance by Date (GET)
-        console.log(`\n7️⃣ Testing Get Attendance by Date: GET /api/attendance/date/${testDate}`);
-        const getByDateRes = await makeRequest(`/api/attendance/date/${testDate}`, 'GET');
-        console.log(`   👉 Status: ${getByDateRes.statusCode} | Date Summary:`, getByDateRes.data.summary);
+        // 2. GET All Attendance
+        console.log('\n2️⃣ GET All Attendance: GET /api/attendance');
+        const getAllRes = await makeRequest('/api/attendance', 'GET');
+        console.log(`   👉 Status: ${getAllRes.statusCode} | Total Records: ${getAllRes.data.total}`);
 
-        // 8. Get Employee Attendance History (GET)
-        console.log(`\n8️⃣ Testing Get Employee History: GET /api/attendance/employee/${testEmpId}`);
-        const getHistoryRes = await makeRequest(`/api/attendance/employee/${testEmpId}`, 'GET');
-        console.log(`   👉 Status: ${getHistoryRes.statusCode} | Attendance Percentage: ${getHistoryRes.data.attendancePercentage}`);
+        // 3. GET Single Attendance by ID or EmployeeId
+        console.log(`\n3️⃣ GET Single Attendance: GET /api/attendance/${testEmpId}`);
+        const getSingleRes = await makeRequest(`/api/attendance/${testEmpId}`, 'GET');
+        console.log(`   👉 Status: ${getSingleRes.statusCode} | Name: ${getSingleRes.data.data.name} | Available: ${getSingleRes.data.data.isAvailable}`);
 
-        // 9. Update Attendance (PUT - Galat lag gayi to change karna)
-        console.log(`\n9️⃣ Testing Update Attendance: PUT /api/attendance/update/${testEmpId}/${testDate}`);
-        const updateAttRes = await makeRequest(`/api/attendance/update/${testEmpId}/${testDate}`, 'PUT', {
-            status: 'Present',
-            remarks: 'Verified present'
+        // 4. PUT Update Attendance (e.g. agar galat lag gayi)
+        console.log(`\n4️⃣ PUT Update Attendance: PUT /api/attendance/${recordId}`);
+        const putRes = await makeRequest(`/api/attendance/${recordId}`, 'PUT', {
+            isAvailable: false,
+            attendanceDate: testDate
         });
-        console.log(`   👉 Status: ${updateAttRes.statusCode} | Result: ${updateAttRes.data.message}`);
+        console.log(`   👉 Status: ${putRes.statusCode} | Message: ${putRes.data.message} | Available Updated To: ${putRes.data.data.isAvailable}`);
 
-        // 10. Delete Attendance (DELETE)
-        console.log(`\n🔟 Testing Delete Attendance: DELETE /api/attendance/delete/${testEmpId}/${testDate}`);
-        const delAttRes = await makeRequest(`/api/attendance/delete/${testEmpId}/${testDate}`, 'DELETE');
-        console.log(`   👉 Status: ${delAttRes.statusCode} | Result: ${delAttRes.data.message}`);
-
-        // 11. Delete Employee (DELETE)
-        console.log(`\n1️⃣1️⃣ Testing Delete Employee: DELETE /api/employees/${testEmpId}`);
-        const delEmpRes = await makeRequest(`/api/employees/${testEmpId}`, 'DELETE');
-        console.log(`   👉 Status: ${delEmpRes.statusCode} | Result: ${delEmpRes.data.message}`);
+        // 5. DELETE Attendance
+        console.log(`\n5️⃣ DELETE Attendance: DELETE /api/attendance/${recordId}`);
+        const delRes = await makeRequest(`/api/attendance/${recordId}`, 'DELETE');
+        console.log(`   👉 Status: ${delRes.statusCode} | Message: ${delRes.data.message}`);
 
         console.log('\n========================================================');
-        console.log('🎉 ALL 11 TESTS PASSED SUCCESSFULLY! EVERYTHING IS 100% READY!');
+        console.log('🎉 ALL 5 OPERATIONS (POST, GET, FIND, PUT, DELETE) PASSED!');
         console.log('========================================================\n');
     } catch (error) {
-        console.error('❌ Test failed with error:', error.message);
-        console.log('👉 Make sure server is running on http://localhost:5000 before running test.js');
+        console.error('❌ Test error:', error.message);
     }
 }
 

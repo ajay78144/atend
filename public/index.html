@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance System Backend - Live Playground</title>
+    <title>Attendance System Backend</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,11 +19,7 @@
             --text-muted: #9ca3af;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -33,10 +29,7 @@
             padding: 24px;
         }
 
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-        }
+        .container { max-width: 900px; margin: 0 auto; }
 
         header {
             display: flex;
@@ -44,23 +37,16 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 16px;
-            padding-bottom: 24px;
+            padding-bottom: 20px;
             border-bottom: 1px solid var(--border);
             margin-bottom: 24px;
         }
 
         .logo-area h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
+            font-size: 1.5rem;
             background: linear-gradient(135deg, #a5b4fc, #6366f1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-
-        .logo-area p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 4px;
         }
 
         .status-badge {
@@ -70,7 +56,7 @@
             background: rgba(16, 185, 129, 0.15);
             color: var(--success);
             border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 8px 14px;
+            padding: 6px 12px;
             border-radius: 9999px;
             font-size: 0.85rem;
             font-weight: 600;
@@ -84,58 +70,32 @@
             box-shadow: 0 0 10px var(--success);
         }
 
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        @media (max-width: 960px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 20px;
+            padding: 24px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 24px;
         }
 
         .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             padding-bottom: 12px;
             border-bottom: 1px solid var(--border);
         }
 
-        .card-header h2 {
-            font-size: 1.15rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
         }
 
-        .badge {
-            font-size: 0.7rem;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-weight: 700;
-            text-transform: uppercase;
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
         }
-        .badge-post { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-        .badge-get { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-        .badge-put { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-        .badge-delete { background: rgba(239, 68, 68, 0.2); color: #f87171; }
 
-        .form-group {
-            margin-bottom: 14px;
-        }
+        .form-group { margin-bottom: 14px; }
 
         label {
             display: block;
@@ -155,7 +115,6 @@
             font-family: inherit;
             font-size: 0.9rem;
             outline: none;
-            transition: all 0.2s;
         }
 
         input:focus, select:focus {
@@ -167,11 +126,11 @@
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin-top: 14px;
+            margin-top: 16px;
         }
 
         button {
-            padding: 9px 16px;
+            padding: 10px 18px;
             border: none;
             border-radius: 8px;
             font-family: inherit;
@@ -179,341 +138,109 @@
             font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
         .btn-success { background: #059669; color: white; }
-        .btn-success:hover { background: #047857; }
-        .btn-warning { background: #d97706; color: white; }
-        .btn-warning:hover { background: #b45309; }
-        .btn-danger { background: #dc2626; color: white; }
-        .btn-danger:hover { background: #b91c1c; }
+        .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: #374151; color: #e5e7eb; }
-        .btn-secondary:hover { background: #4b5563; }
+        .btn-warning { background: #d97706; color: white; }
+        .btn-danger { background: #dc2626; color: white; }
 
         .output-box {
             background: #060911;
             border: 1px solid #1f2937;
             border-radius: 10px;
-            padding: 14px;
+            padding: 16px;
             font-family: 'Fira Code', monospace;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             color: #a5f3fc;
             overflow-x: auto;
-            max-height: 280px;
-            margin-top: 16px;
+            max-height: 300px;
+            margin-top: 18px;
             white-space: pre-wrap;
             word-break: break-all;
-        }
-
-        .response-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-
-        .cheatsheet {
-            background: #111827;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px;
-        }
-
-        .cheatsheet table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-            margin-top: 12px;
-        }
-
-        .cheatsheet th, .cheatsheet td {
-            text-align: left;
-            padding: 10px 12px;
-            border-bottom: 1px solid #1f2937;
-        }
-
-        .cheatsheet th {
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .code-pill {
-            background: #1f2937;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Fira Code', monospace;
-            color: #93c5fd;
-            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- HEADER -->
         <header>
             <div class="logo-area">
-                <h1>📋 Attendance System Backend</h1>
-                <p>Beginner-Friendly Live Testing Console (Node.js + Express + MongoDB Atlas)</p>
+                <h1>📋 Attendance Backend (POST, GET, PUT, DELETE)</h1>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Fields: employeeId, name, manager, isAvailable, attendanceDate</p>
             </div>
             <div class="status-badge">
                 <span class="status-dot"></span>
-                <span>Server & MongoDB Active</span>
+                <span>Live Server</span>
             </div>
         </header>
 
-        <!-- MAIN 2 COLUMNS: EMPLOYEES & ATTENDANCE -->
-        <div class="grid-2">
-            <!-- 👤 1. EMPLOYEE TESTING -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>👤 Employee Operations</h2>
-                    <span class="badge badge-post">POST / GET / PUT / DELETE</span>
-                </div>
-
-                <div class="form-group">
-                    <label>Employee ID</label>
-                    <input type="text" id="empId" value="EMP101" placeholder="e.g. EMP101">
-                </div>
-                <div class="form-group">
-                    <label>Employee Name</label>
-                    <input type="text" id="empName" value="Rahul Sharma" placeholder="e.g. Rahul Sharma">
-                </div>
-                <div class="form-group">
-                    <label>Manager Name</label>
-                    <input type="text" id="empManager" value="Rajesh Sharma" placeholder="e.g. Rajesh Sharma">
-                </div>
-
-                <div class="btn-row">
-                    <button class="btn-success" onclick="addEmployee()">➕ Add (POST)</button>
-                    <button class="btn-primary" onclick="getAllEmployees()">📋 Get All (GET)</button>
-                    <button class="btn-secondary" onclick="getEmployeeById()">🔍 Find by ID (GET)</button>
-                    <button class="btn-warning" onclick="updateEmployee()">✏️ Update (PUT)</button>
-                    <button class="btn-danger" onclick="deleteEmployee()">❌ Delete (DELETE)</button>
-                </div>
-
-                <div class="response-header" style="margin-top: 16px;">
-                    <span>Employee Response:</span>
-                    <span id="empStatus">Ready</span>
-                </div>
-                <div class="output-box" id="empOutput">// Click any button above to test live Employee APIs...</div>
+        <div class="card">
+            <div class="card-header">
+                <h2>⚡ Interactive Testing Console</h2>
             </div>
 
-            <!-- 📅 2. ATTENDANCE TESTING -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>📅 Attendance Operations</h2>
-                    <span class="badge badge-post">POST / GET / PUT / DELETE</span>
-                </div>
-
+            <div class="form-grid">
                 <div class="form-group">
-                    <label>Employee ID</label>
-                    <input type="text" id="attEmpId" value="EMP101" placeholder="e.g. EMP101">
+                    <label>Employee ID (employeeId)</label>
+                    <input type="text" id="employeeId" value="EMP101">
                 </div>
                 <div class="form-group">
-                    <label>Date (YYYY-MM-DD)</label>
-                    <input type="date" id="attDate">
+                    <label>Name (name)</label>
+                    <input type="text" id="name" value="Ajay Kumar">
                 </div>
                 <div class="form-group">
-                    <label>Attendance Status</label>
-                    <select id="attStatus">
-                        <option value="Present" selected>Present (हाज़िर)</option>
-                        <option value="Absent">Absent (गैर-हाज़िर)</option>
-                        <option value="Half-day">Half-day</option>
-                        <option value="Leave">Leave (छुट्टी)</option>
+                    <label>Manager (manager)</label>
+                    <input type="text" id="manager" value="Rajesh Sharma">
+                </div>
+                <div class="form-group">
+                    <label>Is Available (isAvailable)</label>
+                    <select id="isAvailable">
+                        <option value="true" selected>true (Present)</option>
+                        <option value="false">false (Absent)</option>
                     </select>
                 </div>
-
-                <div class="btn-row">
-                    <button class="btn-success" onclick="markAttendance()">✅ Mark Attendance (POST)</button>
-                    <button class="btn-primary" onclick="getAttendanceByDate()">📅 Get by Date (GET)</button>
-                    <button class="btn-secondary" onclick="getAttendanceHistory()">📊 Employee History (GET)</button>
-                    <button class="btn-warning" onclick="updateAttendance()">✏️ Update (PUT)</button>
-                    <button class="btn-danger" onclick="deleteAttendance()">❌ Delete (DELETE)</button>
-                </div>
-
-                <div class="response-header" style="margin-top: 16px;">
-                    <span>Attendance Response:</span>
-                    <span id="attResponseStatus">Ready</span>
-                </div>
-                <div class="output-box" id="attOutput">// Click any button above to test live Attendance APIs...</div>
             </div>
-        </div>
 
-        <!-- 📖 QUICK REFERENCE TABLE -->
-        <div class="cheatsheet">
-            <h3 style="font-size: 1.1rem; margin-bottom: 6px;">📖 Beginner API Route Reference</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Frontend (React, React Native, Axios, Fetch) me yeh direct URLs use karein:</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Method</th>
-                        <th>Endpoint URL</th>
-                        <th>Purpose (Kaam)</th>
-                        <th>Required Fields</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="badge badge-post">POST</span></td>
-                        <td><span class="code-pill">/api/employees</span></td>
-                        <td>Naya Employee register karna</td>
-                        <td><code>employeeId</code>, <code>name</code></td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-get">GET</span></td>
-                        <td><span class="code-pill">/api/employees</span></td>
-                        <td>Sabhi employees ki list dekhna</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-post">POST</span></td>
-                        <td><span class="code-pill">/api/attendance</span></td>
-                        <td>Daily Attendance mark karna (Present/Absent)</td>
-                        <td><code>employeeId</code>, <code>date</code>, <code>status</code></td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-get">GET</span></td>
-                        <td><span class="code-pill">/api/attendance/date/:date</span></td>
-                        <td>Kisi date ki summary & present list nikalna</td>
-                        <td><code>:date</code> (e.g. 2026-10-27)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-get">GET</span></td>
-                        <td><span class="code-pill">/api/attendance/employee/:id</span></td>
-                        <td>Employee ki total percentage aur history</td>
-                        <td><code>:employeeId</code></td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-put">PUT</span></td>
-                        <td><span class="code-pill">/api/attendance/update/:id/:date</span></td>
-                        <td>Galat lag gayi to attendance sudharna</td>
-                        <td><code>status</code></td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-delete">DELETE</span></td>
-                        <td><span class="code-pill">/api/attendance/delete/:id/:date</span></td>
-                        <td>Attendance record delete karna</td>
-                        <td>None</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="form-group">
+                <label>Attendance Date (attendanceDate)</label>
+                <input type="date" id="attendanceDate">
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-success" onclick="postData()">➕ POST Attendance</button>
+                <button class="btn-primary" onclick="getAllData()">📋 GET All</button>
+                <button class="btn-secondary" onclick="getSingleData()">🔍 GET by ID</button>
+                <button class="btn-warning" onclick="putData()">✏️ PUT Update</button>
+                <button class="btn-danger" onclick="deleteData()">❌ DELETE</button>
+            </div>
+
+            <div style="margin-top: 18px; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted);">
+                <span>Response Output:</span>
+                <span id="resStatus">Ready</span>
+            </div>
+            <div class="output-box" id="output">// Click any button above to test...</div>
         </div>
     </div>
 
-    <!-- SCRIPT FOR LIVE API CALLS -->
     <script>
-        // Set today's date in input by default
         const todayStr = new Date().toISOString().split('T')[0];
-        document.getElementById('attDate').value = todayStr;
+        document.getElementById('attendanceDate').value = todayStr;
 
-        // Helper to format output
-        function display(elementId, statusId, status, data) {
-            document.getElementById(statusId).textContent = `Status: ${status}`;
-            document.getElementById(elementId).textContent = JSON.stringify(data, null, 2);
+        function showResult(status, data) {
+            document.getElementById('resStatus').textContent = `Status: ${status}`;
+            document.getElementById('output').textContent = JSON.stringify(data, null, 2);
         }
 
-        // 1. ADD EMPLOYEE (POST)
-        async function addEmployee() {
+        // 1. POST
+        async function postData() {
             const body = {
-                employeeId: document.getElementById('empId').value.trim(),
-                name: document.getElementById('empName').value.trim(),
-                manager: document.getElementById('empManager').value.trim(),
-                isAvailable: true
+                employeeId: document.getElementById('employeeId').value.trim(),
+                name: document.getElementById('name').value.trim(),
+                manager: document.getElementById('manager').value.trim(),
+                isAvailable: document.getElementById('isAvailable').value === 'true',
+                attendanceDate: document.getElementById('attendanceDate').value
             };
-            try {
-                const res = await fetch('/api/employees', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-                const data = await res.json();
-                display('empOutput', 'empStatus', res.status, data);
-            } catch (err) {
-                display('empOutput', 'empStatus', 'Error', { error: err.message });
-            }
-        }
-
-        // 2. GET ALL EMPLOYEES (GET)
-        async function getAllEmployees() {
-            try {
-                const res = await fetch('/api/employees');
-                const data = await res.json();
-                display('empOutput', 'empStatus', res.status, data);
-            } catch (err) {
-                display('empOutput', 'empStatus', 'Error', { error: err.message });
-            }
-        }
-
-        // 3. GET EMPLOYEE BY ID (FIND)
-        async function getEmployeeById() {
-            const id = document.getElementById('empId').value.trim();
-            try {
-                const res = await fetch(`/api/employees/${id}`);
-                const data = await res.json();
-                display('empOutput', 'empStatus', res.status, data);
-            } catch (err) {
-                display('empOutput', 'empStatus', 'Error', { error: err.message });
-            }
-        }
-
-        // 4. UPDATE EMPLOYEE (PUT)
-        async function updateEmployee() {
-            const id = document.getElementById('empId').value.trim();
-            const body = {
-                name: document.getElementById('empName').value.trim(),
-                manager: document.getElementById('empManager').value.trim(),
-                isAvailable: true
-            };
-            try {
-                const res = await fetch(`/api/employees/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-                const data = await res.json();
-                display('empOutput', 'empStatus', res.status, data);
-            } catch (err) {
-                display('empOutput', 'empStatus', 'Error', { error: err.message });
-            }
-        }
-
-        // 5. DELETE EMPLOYEE (DELETE)
-        async function deleteEmployee() {
-            const id = document.getElementById('empId').value.trim();
-            if (!confirm(`Are you sure you want to delete employee ${id}?`)) return;
-            try {
-                const res = await fetch(`/api/employees/${id}`, { method: 'DELETE' });
-                const data = await res.json();
-                display('empOutput', 'empStatus', res.status, data);
-            } catch (err) {
-                display('empOutput', 'empStatus', 'Error', { error: err.message });
-            }
-        }
-
-        // 6. MARK ATTENDANCE (POST)
-        async function markAttendance() {
-            const empId = document.getElementById('attEmpId').value.trim();
-            const date = document.getElementById('attDate').value;
-            const status = document.getElementById('attStatus').value;
-            const empName = document.getElementById('empName').value.trim();
-            const manager = document.getElementById('empManager').value.trim();
-
-            const body = {
-                employeeId: empId,
-                name: empName,
-                manager: manager,
-                date: date,
-                status: status,
-                isAvailable: status === 'Present',
-                remarks: `Marked as ${status}`
-            };
-
             try {
                 const res = await fetch('/api/attendance', {
                     method: 'POST',
@@ -521,73 +248,67 @@
                     body: JSON.stringify(body)
                 });
                 const data = await res.json();
-                display('attOutput', 'attResponseStatus', res.status, data);
+                showResult(res.status, data);
             } catch (err) {
-                display('attOutput', 'attResponseStatus', 'Error', { error: err.message });
+                showResult('Error', { error: err.message });
             }
         }
 
-        // 7. GET ATTENDANCE BY DATE (GET)
-        async function getAttendanceByDate() {
-            const date = document.getElementById('attDate').value;
+        // 2. GET ALL
+        async function getAllData() {
             try {
-                const res = await fetch(`/api/attendance/date/${date}`);
+                const res = await fetch('/api/attendance');
                 const data = await res.json();
-                display('attOutput', 'attResponseStatus', res.status, data);
+                showResult(res.status, data);
             } catch (err) {
-                display('attOutput', 'attResponseStatus', 'Error', { error: err.message });
+                showResult('Error', { error: err.message });
             }
         }
 
-        // 8. GET ATTENDANCE HISTORY (GET)
-        async function getAttendanceHistory() {
-            const empId = document.getElementById('attEmpId').value.trim();
+        // 3. GET SINGLE
+        async function getSingleData() {
+            const id = document.getElementById('employeeId').value.trim();
             try {
-                const res = await fetch(`/api/attendance/employee/${empId}`);
+                const res = await fetch(`/api/attendance/${id}`);
                 const data = await res.json();
-                display('attOutput', 'attResponseStatus', res.status, data);
+                showResult(res.status, data);
             } catch (err) {
-                display('attOutput', 'attResponseStatus', 'Error', { error: err.message });
+                showResult('Error', { error: err.message });
             }
         }
 
-        // 9. UPDATE ATTENDANCE (PUT)
-        async function updateAttendance() {
-            const empId = document.getElementById('attEmpId').value.trim();
-            const date = document.getElementById('attDate').value;
-            const status = document.getElementById('attStatus').value;
-
+        // 4. PUT UPDATE
+        async function putData() {
+            const id = document.getElementById('employeeId').value.trim();
+            const body = {
+                name: document.getElementById('name').value.trim(),
+                manager: document.getElementById('manager').value.trim(),
+                isAvailable: document.getElementById('isAvailable').value === 'true',
+                attendanceDate: document.getElementById('attendanceDate').value
+            };
             try {
-                const res = await fetch(`/api/attendance/update/${empId}/${date}`, {
+                const res = await fetch(`/api/attendance/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        status: status,
-                        isAvailable: status === 'Present',
-                        remarks: `Updated to ${status}`
-                    })
+                    body: JSON.stringify(body)
                 });
                 const data = await res.json();
-                display('attOutput', 'attResponseStatus', res.status, data);
+                showResult(res.status, data);
             } catch (err) {
-                display('attOutput', 'attResponseStatus', 'Error', { error: err.message });
+                showResult('Error', { error: err.message });
             }
         }
 
-        // 10. DELETE ATTENDANCE (DELETE)
-        async function deleteAttendance() {
-            const empId = document.getElementById('attEmpId').value.trim();
-            const date = document.getElementById('attDate').value;
-            if (!confirm(`Are you sure you want to delete attendance of ${empId} for ${date}?`)) return;
-
+        // 5. DELETE
+        async function deleteData() {
+            const id = document.getElementById('employeeId').value.trim();
+            if (!confirm(`Delete attendance of ${id}?`)) return;
             try {
-                const res = await fetch(`/api/attendance/delete/${empId}/${date}`, {
-                    method: 'DELETE'
-                });
+                const res = await fetch(`/api/attendance/${id}`, { method: 'DELETE' });
                 const data = await res.json();
-                display('attOutput', 'attResponseStatus', res.status, data);
+                showResult(res.status, data);
             } catch (err) {
-                display('attOutput', 'attResponseStatus', 'Error', { error: err.message });
+                showResult('Error', { error: err.message });
             }
         }
     </script>

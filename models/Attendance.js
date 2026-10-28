@@ -1,6 +1,6 @@
 // ==========================================
 // 📁 models/Attendance.js
-// 🎯 Kaam: Attendance ka Schema (employeeId, name, manager, date, status, isAvailable)
+// 🎯 Only 5 Fields: employeeId, name, manager, isAvailable, attendanceDate
 // ==========================================
 
 const mongoose = require('mongoose');
@@ -18,33 +18,20 @@ const attendanceSchema = new mongoose.Schema({
     },
     manager: {
         type: String,
-        default: 'General Manager',
+        required: [true, 'manager dena zaroori hai'],
         trim: true
-    },
-    date: {
-        type: String,
-        required: [true, 'Attendance date zaroori hai (Format: YYYY-MM-DD)'],
-        trim: true
-    },
-    status: {
-        type: String,
-        enum: ['Present', 'Absent', 'Half-day', 'Leave'],
-        default: 'Present'
     },
     isAvailable: {
         type: Boolean,
         default: true
     },
-    remarks: {
+    attendanceDate: {
         type: String,
-        default: '',
+        required: [true, 'attendanceDate zaroori hai (Format: YYYY-MM-DD)'],
         trim: true
     }
 }, {
     timestamps: true
 });
-
-// Ek date par ek employee ki ek hi attendance lag sake (Prevent duplicate attendance)
-attendanceSchema.index({ employeeId: 1, date: 1 }, { unique: true });
 
 module.exports = mongoose.model('Attendance', attendanceSchema);
