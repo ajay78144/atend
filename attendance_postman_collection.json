@@ -1,210 +1,93 @@
 {
 	"info": {
-		"_postman_id": "attendance-system-api-collection",
-		"name": "Attendance Management System API",
-		"description": "Complete collection for testing Employee and Attendance CRUD APIs (GET, POST, PUT, DELETE, FIND)",
+		"_postman_id": "attendance-simple-api-collection",
+		"name": "Attendance API (Simple 5 Fields)",
+		"description": "API collection for Attendance Backend with ONLY 5 fields: employeeId, name, manager, isAvailable, attendanceDate",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "1. Employees",
-			"item": [
-				{
-					"name": "POST - Naya Employee Add Karein",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"employeeId\": \"EMP101\",\n  \"name\": \"Rahul Sharma\",\n  \"manager\": \"Rajesh Verma\",\n  \"isAvailable\": true\n}"
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/employees",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "employees"]
-						}
+			"name": "1. POST Attendance (Nayi Attendance Lagayein)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
 					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"employeeId\": \"EMP101\",\n  \"name\": \"Ajay Kumar\",\n  \"manager\": \"Rajesh Sharma\",\n  \"isAvailable\": true,\n  \"attendanceDate\": \"2026-10-28\"\n}"
 				},
-				{
-					"name": "GET - Sabhi Employees Nikalein",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/employees",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "employees"]
-						}
-					}
-				},
-				{
-					"name": "GET (FIND) - Single Employee ID Se Dhoondein",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/employees/EMP101",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "employees", "EMP101"]
-						}
-					}
-				},
-				{
-					"name": "PUT - Employee Detail Update Karein",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Rahul Kumar Sharma\",\n  \"manager\": \"Suresh Kumar\",\n  \"isAvailable\": true\n}"
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/employees/EMP101",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "employees", "EMP101"]
-						}
-					}
-				},
-				{
-					"name": "DELETE - Employee Delete Karein",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/employees/EMP101",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "employees", "EMP101"]
-						}
-					}
+				"url": {
+					"raw": "https://atend.onrender.com/api/attendance",
+					"protocol": "https",
+					"host": ["atend", "onrender", "com"],
+					"path": ["api", "attendance"]
 				}
-			]
+			}
 		},
 		{
-			"name": "2. Attendance",
-			"item": [
-				{
-					"name": "POST - Attendance Mark Karein (Present/Absent)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"employeeId\": \"EMP101\",\n  \"name\": \"Rahul Sharma\",\n  \"date\": \"2026-10-27\",\n  \"status\": \"Present\",\n  \"isAvailable\": true,\n  \"remarks\": \"On time login\"\n}"
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/attendance",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "attendance"]
-						}
-					}
-				},
-				{
-					"name": "GET - Sabhi Attendance Records",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/attendance",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "attendance"]
-						}
-					}
-				},
-				{
-					"name": "GET - Date-wise Attendance & Summary (e.g. 2026-10-27)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/attendance/date/2026-10-27",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "attendance", "date", "2026-10-27"]
-						}
-					}
-				},
-				{
-					"name": "GET - Employee Attendance History & Percentage",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/attendance/employee/EMP101",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "attendance", "employee", "EMP101"]
-						}
-					}
-				},
-				{
-					"name": "PUT - Attendance Update Karein (Agar galti lag gayi)",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"status\": \"Present\",\n  \"isAvailable\": true,\n  \"remarks\": \"Corrected to Present\"\n}"
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/attendance/update/EMP101/2026-10-27",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "attendance", "update", "EMP101", "2026-10-27"]
-						}
-					}
-				},
-				{
-					"name": "DELETE - Attendance Delete Karein (By EmployeeId & Date)",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/attendance/delete/EMP101/2026-10-27",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "5000",
-							"path": ["api", "attendance", "delete", "EMP101", "2026-10-27"]
-						}
-					}
+			"name": "2. GET All Attendance (Sabhi Records Dekhein)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://atend.onrender.com/api/attendance",
+					"protocol": "https",
+					"host": ["atend", "onrender", "com"],
+					"path": ["api", "attendance"]
 				}
-			]
+			}
+		},
+		{
+			"name": "3. GET (FIND) Single Attendance (EmployeeId Ya ID Se)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://atend.onrender.com/api/attendance/EMP101",
+					"protocol": "https",
+					"host": ["atend", "onrender", "com"],
+					"path": ["api", "attendance", "EMP101"]
+				}
+			}
+		},
+		{
+			"name": "4. PUT Update Attendance (Galat Lag Gayi To Sudharein)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Ajay Kumar\",\n  \"manager\": \"Rajesh Sharma\",\n  \"isAvailable\": false,\n  \"attendanceDate\": \"2026-10-28\"\n}"
+				},
+				"url": {
+					"raw": "https://atend.onrender.com/api/attendance/EMP101",
+					"protocol": "https",
+					"host": ["atend", "onrender", "com"],
+					"path": ["api", "attendance", "EMP101"]
+				}
+			}
+		},
+		{
+			"name": "5. DELETE Attendance (Record Delete Karein)",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://atend.onrender.com/api/attendance/EMP101",
+					"protocol": "https",
+					"host": ["atend", "onrender", "com"],
+					"path": ["api", "attendance", "EMP101"]
+				}
+			}
 		}
 	]
 }
