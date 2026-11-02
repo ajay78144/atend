@@ -18,7 +18,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"employeeId\": \"EMP101\",\n  \"name\": \"Ajay Kumar\",\n  \"manager\": \"Rajesh Sharma\",\n  \"isAvailable\": true,\n  \"attendanceDate\": \"2026-10-28\"\n}"
+					"raw": "{\n  \"employeeId\": \"EMP101\",\n  \"name\": \"Ajay Kumar\",\n  \"manager\": \"Rajesh Sharma\",\n  \"status\": \"Present\",\n  \"isAvailable\": true,\n  \"attendanceDate\": \"2026-10-28\"\n}"
 				},
 				"url": {
 					"raw": "https://atend.onrender.com/api/attendance",
@@ -66,7 +66,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"name\": \"Ajay Kumar\",\n  \"manager\": \"Rajesh Sharma\",\n  \"isAvailable\": false,\n  \"attendanceDate\": \"2026-10-28\"\n}"
+					"raw": "{\n  \"name\": \"Ajay Kumar\",\n  \"manager\": \"Rajesh Sharma\",\n  \"status\": \"Absent\",\n  \"isAvailable\": false,\n  \"attendanceDate\": \"2026-10-28\"\n}"
 				},
 				"url": {
 					"raw": "https://atend.onrender.com/api/attendance/EMP101",

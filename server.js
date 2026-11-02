@@ -44,6 +44,7 @@ app.get('/api', (req, res) => {
 // 6. Routes Mount karein
 app.use('/api/employees', require('./routes/employeeRoutes'));
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
+app.use('/api/devices', require('./routes/attendanceRoutes')); // Biometric / Device attendance route support
 
 // 7. 404 Not Found Handler (Agar koi galat URL daale)
 app.use((req, res) => {

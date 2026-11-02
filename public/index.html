@@ -194,10 +194,19 @@
                     <input type="text" id="manager" value="Rajesh Sharma">
                 </div>
                 <div class="form-group">
+                    <label>Attendance Status (status)</label>
+                    <select id="status" onchange="syncAvailability()">
+                        <option value="Present" selected>Present (उपस्थित)</option>
+                        <option value="Absent">Absent (अनुपस्थित)</option>
+                        <option value="Half Day">Half Day (आधा दिन)</option>
+                        <option value="Leave">Leave (छुट्टी)</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Is Available (isAvailable)</label>
                     <select id="isAvailable">
-                        <option value="true" selected>true (Present)</option>
-                        <option value="false">false (Absent)</option>
+                        <option value="true" selected>true (Available)</option>
+                        <option value="false">false (Not Available)</option>
                     </select>
                 </div>
             </div>
@@ -227,6 +236,16 @@
         const todayStr = new Date().toISOString().split('T')[0];
         document.getElementById('attendanceDate').value = todayStr;
 
+        function syncAvailability() {
+            const st = document.getElementById('status').value;
+            const availSelect = document.getElementById('isAvailable');
+            if (st === 'Absent') {
+                availSelect.value = 'false';
+            } else {
+                availSelect.value = 'true';
+            }
+        }
+
         function showResult(status, data) {
             document.getElementById('resStatus').textContent = `Status: ${status}`;
             document.getElementById('output').textContent = JSON.stringify(data, null, 2);
@@ -238,6 +257,7 @@
                 employeeId: document.getElementById('employeeId').value.trim(),
                 name: document.getElementById('name').value.trim(),
                 manager: document.getElementById('manager').value.trim(),
+                status: document.getElementById('status').value,
                 isAvailable: document.getElementById('isAvailable').value === 'true',
                 attendanceDate: document.getElementById('attendanceDate').value
             };
@@ -283,6 +303,7 @@
             const body = {
                 name: document.getElementById('name').value.trim(),
                 manager: document.getElementById('manager').value.trim(),
+                status: document.getElementById('status').value,
                 isAvailable: document.getElementById('isAvailable').value === 'true',
                 attendanceDate: document.getElementById('attendanceDate').value
             };

@@ -21,6 +21,12 @@ const attendanceSchema = new mongoose.Schema({
         required: [true, 'manager dena zaroori hai'],
         trim: true
     },
+    status: {
+        type: String,
+        enum: ['Present', 'Absent', 'Half Day', 'Leave'],
+        default: 'Present',
+        trim: true
+    },
     isAvailable: {
         type: Boolean,
         default: true

@@ -60,11 +60,23 @@ async function runTests() {
             employeeId: testEmpId,
             name: 'Ajay Kumar',
             manager: 'Rajesh Sharma',
-            isAvailable: true,
+            status: 'Present',
             attendanceDate: testDate
         });
-        console.log(`   👉 Status: ${postRes.statusCode} | Message: ${postRes.data.message}`);
+        console.log(`   👉 Status: ${postRes.statusCode} | Status Field: ${postRes.data.data ? postRes.data.data.status : ''} | Message: ${postRes.data.message}`);
         const recordId = postRes.data.data ? postRes.data.data._id : testEmpId;
+
+        // 1b. Test POST /api/devices
+        const devEmpId = 'DEV_' + Math.floor(100 + Math.random() * 900);
+        console.log(`\n1️⃣b POST Attendance via /api/devices: POST /api/devices (${devEmpId})`);
+        const devRes = await makeRequest('/api/devices', 'POST', {
+            employeeId: devEmpId,
+            name: 'Device User',
+            manager: 'Rajesh Sharma',
+            status: 'Present',
+            attendanceDate: testDate
+        });
+        console.log(`   👉 Status: ${devRes.statusCode} | Message: ${devRes.data.message}`);
 
         // 2. GET All Attendance
         console.log('\n2️⃣ GET All Attendance: GET /api/attendance');
@@ -74,20 +86,24 @@ async function runTests() {
         // 3. GET Single Attendance by ID or EmployeeId
         console.log(`\n3️⃣ GET Single Attendance: GET /api/attendance/${testEmpId}`);
         const getSingleRes = await makeRequest(`/api/attendance/${testEmpId}`, 'GET');
-        console.log(`   👉 Status: ${getSingleRes.statusCode} | Name: ${getSingleRes.data.data.name} | Available: ${getSingleRes.data.data.isAvailable}`);
+        console.log(`   👉 Status: ${getSingleRes.statusCode} | Name: ${getSingleRes.data.data.name} | Status: ${getSingleRes.data.data.status} | Available: ${getSingleRes.data.data.isAvailable}`);
 
-        // 4. PUT Update Attendance (e.g. agar galat lag gayi)
+        // 4. PUT Update Attendance (e.g. agar galat lag gayi - mark Absent)
         console.log(`\n4️⃣ PUT Update Attendance: PUT /api/attendance/${recordId}`);
         const putRes = await makeRequest(`/api/attendance/${recordId}`, 'PUT', {
-            isAvailable: false,
+            status: 'Absent',
             attendanceDate: testDate
         });
-        console.log(`   👉 Status: ${putRes.statusCode} | Message: ${putRes.data.message} | Available Updated To: ${putRes.data.data.isAvailable}`);
+        console.log(`   👉 Status: ${putRes.statusCode} | Message: ${putRes.data.message} | Status Updated To: ${putRes.data.data.status} | isAvailable: ${putRes.data.data.isAvailable}`);
 
         // 5. DELETE Attendance
         console.log(`\n5️⃣ DELETE Attendance: DELETE /api/attendance/${recordId}`);
         const delRes = await makeRequest(`/api/attendance/${recordId}`, 'DELETE');
         console.log(`   👉 Status: ${delRes.statusCode} | Message: ${delRes.data.message}`);
+
+        if (devRes.data.data && devRes.data.data._id) {
+            await makeRequest(`/api/attendance/${devRes.data.data._id}`, 'DELETE');
+        }
 
         console.log('\n========================================================');
         console.log('🎉 ALL 5 OPERATIONS (POST, GET, FIND, PUT, DELETE) PASSED!');

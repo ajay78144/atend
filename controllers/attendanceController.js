@@ -10,7 +10,7 @@ const Attendance = require('../models/Attendance');
 // Route: POST /api/attendance
 exports.postAttendance = async (req, res) => {
     try {
-        const { employeeId, name, manager, isAvailable, attendanceDate } = req.body;
+        let { employeeId, name, manager, isAvailable, status, attendanceDate } = req.body;
 
         // Validation: Required fields check karein
         if (!employeeId || !name || !manager || !attendanceDate) {
@@ -20,12 +20,33 @@ exports.postAttendance = async (req, res) => {
             });
         }
 
+        // Format status (Present / Absent / Half Day / Leave)
+        if (status) {
+            const lower = status.toString().trim().toLowerCase();
+            if (lower === 'present') status = 'Present';
+            else if (lower === 'absent') status = 'Absent';
+            else if (lower === 'half day' || lower === 'halfday') status = 'Half Day';
+            else if (lower === 'leave') status = 'Leave';
+            else status = status.trim();
+
+            if (isAvailable === undefined) {
+                isAvailable = (status !== 'Absent');
+            }
+        } else {
+            status = (isAvailable === false) ? 'Absent' : 'Present';
+        }
+
+        if (isAvailable === undefined) {
+            isAvailable = true;
+        }
+
         // Attendance save karein
         const newAttendance = new Attendance({
             employeeId,
             name,
             manager,
-            isAvailable: isAvailable !== undefined ? isAvailable : true,
+            status,
+            isAvailable,
             attendanceDate
         });
 
@@ -47,14 +68,15 @@ exports.postAttendance = async (req, res) => {
 
 // 2️⃣ GET: Sabhi Attendance records nikalna
 // Route: GET /api/attendance
-// Optional filter by attendanceDate: GET /api/attendance?attendanceDate=2026-10-28
+// Optional filters: ?attendanceDate=2026-10-28 & ?employeeId=EMP101 & ?status=Present
 exports.getAttendance = async (req, res) => {
     try {
-        const { attendanceDate, employeeId } = req.query;
+        const { attendanceDate, employeeId, status } = req.query;
         let filter = {};
 
         if (attendanceDate) filter.attendanceDate = attendanceDate;
         if (employeeId) filter.employeeId = employeeId;
+        if (status) filter.status = new RegExp(`^${status.trim()}$`, 'i');
 
         const records = await Attendance.find(filter).sort({ createdAt: -1 });
 
@@ -112,20 +134,40 @@ exports.getAttendanceById = async (req, res) => {
 exports.updateAttendance = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, manager, isAvailable, attendanceDate } = req.body;
+        let { name, manager, isAvailable, status, attendanceDate } = req.body;
 
         const updateData = {};
         if (name !== undefined) updateData.name = name;
         if (manager !== undefined) updateData.manager = manager;
-        if (isAvailable !== undefined) updateData.isAvailable = isAvailable;
         if (attendanceDate !== undefined) updateData.attendanceDate = attendanceDate;
+
+        if (status !== undefined) {
+            const lower = status.toString().trim().toLowerCase();
+            if (lower === 'present') status = 'Present';
+            else if (lower === 'absent') status = 'Absent';
+            else if (lower === 'half day' || lower === 'halfday') status = 'Half Day';
+            else if (lower === 'leave') status = 'Leave';
+            else status = status.trim();
+
+            updateData.status = status;
+            if (isAvailable === undefined) {
+                updateData.isAvailable = (status !== 'Absent');
+            }
+        }
+
+        if (isAvailable !== undefined) {
+            updateData.isAvailable = isAvailable;
+            if (status === undefined) {
+                updateData.status = isAvailable ? 'Present' : 'Absent';
+            }
+        }
 
         let updated = null;
         if (id.match(/^[0-9a-fA-F]{24}$/)) {
-            updated = await Attendance.findByIdAndUpdate(id, updateData, { new: true });
+            updated = await Attendance.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
         }
         if (!updated) {
-            updated = await Attendance.findOneAndUpdate({ employeeId: id }, updateData, { new: true });
+            updated = await Attendance.findOneAndUpdate({ employeeId: id }, updateData, { new: true, runValidators: true });
         }
 
         if (!updated) {
